@@ -2,7 +2,7 @@
 from flyai_sdk import FlyAI
 from PIL import Image
 import torchvision
-from model import myResnet, fnResnet
+from model import myResnet, fnResnet, myResnet34
 import torch
 
 
@@ -15,8 +15,8 @@ class Prediction(FlyAI):
         模型初始化，必须在此方法中加载模型
         '''
         # net = myResnet()
-        net = myResnet()
-        net.load_state_dict(torch.load("myResnet2.params"))
+        net = myResnet34()
+        net.load_state_dict(torch.load("myResnet34.params"))
         return net
 
     def predict(self, data):
@@ -27,7 +27,7 @@ class Prediction(FlyAI):
         '''
         img = Image.open(data)
         augs = torchvision.transforms.Compose([
-            torchvision.transforms.RandomResizedCrop(  # 统一裁剪为 300*300，区域覆盖原来的 90% 以上
+            torchvision.transforms.RandomResizedCrop(  # 统一裁剪为 224*224，区域覆盖原来的 90% 以上
                 (224, 224), scale=(0.9, 1), ratio=(1, 1)  # 高宽比不变（脸型还是很重要的，不要变形）
             ),
             torchvision.transforms.ToTensor()

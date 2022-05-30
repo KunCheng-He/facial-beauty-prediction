@@ -20,7 +20,7 @@ import torchvision
 from showm import apply as ap  # 自己显示图像的 API ，看一下增强后的图像
 from showm import show_img
 import numpy as np
-from model import myResnet, fnResnet
+from model import myResnet, fnResnet, myResnet34
 
 
 
@@ -196,8 +196,9 @@ class Main(FlyAI):
 if __name__ == '__main__':
     # 模型的一些参数
     batch_size = 64
-    epochs = 30
-    lr = 5e-5
+    epochs = 20
+    # lr = 5e-5
+    lr = 3e-4
     device = try_gpu()  # batch_size=1 我电脑都跑不了
 
     # 主程序
@@ -206,10 +207,11 @@ if __name__ == '__main__':
     train_loader, valid_loader = main.deal_with_data(batch_size)
     
     # 开始训练
-    net = main.train(myResnet(), train_loader, valid_loader, epochs, lr, device)
+    net = main.train(myResnet34(), train_loader, valid_loader, epochs, lr, device)
 
     # 将我们训练的模型保存下来
-    torch.save(net.state_dict(), 'myResnet2.params')
+    torch.save(net.state_dict(), 'myResnet34.params')
+    print("保存模型到myResnet34.params")
 
     # 单步程序，看看具体某张图片的打分
     # while True:
