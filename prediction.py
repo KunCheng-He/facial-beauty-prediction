@@ -2,7 +2,7 @@
 from flyai_sdk import FlyAI
 from PIL import Image
 import torchvision
-from model import myResnet, fnResnet, myResnet34
+from model import myResnet, myResnet2, myResnet3, myResnet4, myResnet34
 import torch
 
 
@@ -14,9 +14,13 @@ class Prediction(FlyAI):
         '''
         模型初始化，必须在此方法中加载模型
         '''
+        # net 为我们本次训练好的模型，要和载入的参数相对应
         # net = myResnet()
-        net = myResnet34()
-        net.load_state_dict(torch.load("myResnet34.params"))
+        # net = myResnet2()
+        # net = myResnet3()
+        net = myResnet4()
+        # net = myResnet34()
+        net.load_state_dict(torch.load("myResnet4.params"))  # 载入对应训练好的模型
         return net
 
     def predict(self, data):
@@ -37,6 +41,7 @@ class Prediction(FlyAI):
         return self.net(img).item()
 
 
+# 以下是我写的本地测试部分，提交到平台上将以下注释掉即可
 # if __name__ == "__main__":
 #     pre = Prediction()
 #     while True:

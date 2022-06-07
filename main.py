@@ -20,7 +20,7 @@ import torchvision
 from showm import apply as ap  # 自己显示图像的 API ，看一下增强后的图像
 from showm import show_img
 import numpy as np
-from model import myResnet, fnResnet, myResnet34
+from model import myResnet, myResnet2, myResnet3, myResnet4, myResnet34
 
 
 
@@ -153,65 +153,29 @@ class Main(FlyAI):
         # 返回我们训练完成的模型
         return net
     
-    # 训练 fnResnet
-    def train_fnResnet(self, net, train_iter, valid_iter, epochs, lr, device):
-        # 打印训练的设备
-        print("train on : ", device)
-
-        # 前面用默认学习率，最后一层用 10 倍学习率
-        param_1x = [param for name, param in net.named_parameters() if name not in ["fc.weight", "fc.bias"]]
-        optimizer = torch.optim.SGD(
-            [{"params": param_1x}, {"params": net.fc.parameters(), "lr": lr * 10}],  # 最后一层学习率扩大十倍
-            lr=lr, weight_decay=0.001
-        )
-        
-
-        # 优化器使用 Adam，损失函数用均方误差
-        loss = nn.MSELoss()
-
-        # 把模型迁移到指定设备上
-        net.to(device)
-
-        # 开始训练
-        for epoch in range(epochs):
-            for X, y in train_iter:
-                # 迁移到设备
-                X, y = X.to(device), y.to(device)
-                y_hat = net(X)
-                y = y.reshape(y_hat.shape)
-                l = loss(y_hat, y)
-                optimizer.zero_grad()
-                l.backward()
-                optimizer.step()
-            
-            # 一个 epoch 已经训练完了，我们看看在训练集上的损失，和验证集上的损失
-            trainLoss, trainNum = self.sum_loss(net, train_iter, loss, device)
-            validLoss, validNum = self.sum_loss(net, valid_iter, loss, device)
-            print("epoch {} -- train {} loss: {:.6f} -- valid {} loss: {:.6f}".format(epoch+1, trainNum, trainLoss, validNum, validLoss))
-
-        # 返回我们训练完成的模型
-        return net
-
 
 if __name__ == '__main__':
     # 模型的一些参数
     batch_size = 64
-    epochs = 20
-    # lr = 5e-5
-    lr = 3e-4
-    device = try_gpu()  # batch_size=1 我电脑都跑不了
+    epochs = 30
+    # 各个模型我所使用的 学习率
+    # lr = 1e-4  # myResnet
+    # lr = 5e-5  # myResnet2
+    # lr = 8e-5  # myResnet3
+    lr = 5e-5  # myResnet4
+    device = try_gpu()
 
     # 主程序
     main = Main()
-    main.download_data()
+    main.download_data()  # 本地第一次运行需要，下载后本地可将本行代码注释掉，提交到平台上这行代码不要注释
     train_loader, valid_loader = main.deal_with_data(batch_size)
     
     # 开始训练
-    net = main.train(myResnet34(), train_loader, valid_loader, epochs, lr, device)
+    net = main.train(myResnet4(), train_loader, valid_loader, epochs, lr, device)
 
     # 将我们训练的模型保存下来
-    torch.save(net.state_dict(), 'myResnet34.params')
-    print("保存模型到myResnet34.params")
+    torch.save(net.state_dict(), 'myResnet4.params')
+    print("保存模型到myResnet4.params")
 
     # 单步程序，看看具体某张图片的打分
     # while True:
