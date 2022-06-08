@@ -63,7 +63,7 @@
 5. 将所需文件打包成压缩包提交，Linux下用终端的打包命令如下：
 
    ```shell
-   zip -r main.zip main.py prediction.py showm.py app.json flyai_sdk.py model.py requirements.txt
+   zip -r main.zip app.json flyai_sdk.py gender_class.py main.py model.py prediction.py showm.py requirements.txt
    ```
 
    之后就打开网站，上传压缩包，等待训练即可

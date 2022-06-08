@@ -157,7 +157,7 @@ class Main(FlyAI):
 if __name__ == '__main__':
     # 模型的一些参数
     batch_size = 64
-    epochs = 30
+    epochs = 60
     # 各个模型我所使用的 学习率
     # lr = 1e-4  # myResnet
     # lr = 5e-5  # myResnet2
