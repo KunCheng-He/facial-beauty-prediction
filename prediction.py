@@ -2,7 +2,7 @@
 from flyai_sdk import FlyAI
 from PIL import Image
 import torchvision
-from model import myResnet, myResnet2, myResnet3, myResnet4, myResnet34
+from model import myResnet, myResnet2, myResnet3, myResnet4, Resnet34
 import torch
 
 
@@ -18,9 +18,9 @@ class Prediction(FlyAI):
         # net = myResnet()
         # net = myResnet2()
         # net = myResnet3()
-        net = myResnet4()
-        # net = myResnet34()
-        net.load_state_dict(torch.load("myResnet4.params"))  # 载入对应训练好的模型
+        # net = myResnet4()
+        net = Resnet34()
+        net.load_state_dict(torch.load("Resnet34.params"))  # 载入对应训练好的模型
         return net
 
     def predict(self, data):

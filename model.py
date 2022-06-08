@@ -166,7 +166,7 @@ def myResnet4():
 
 
 # 更深的 Resnet 模型 Resnet34
-def myResnet34():
+def Resnet34():
     # 第一部分
     b1 = nn.Sequential(
         nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),  # 通道：3 -> 64  形状：(224-7+2*3+2)/2=112
@@ -185,8 +185,7 @@ def myResnet34():
     net = nn.Sequential(
         b1, b2, b3, b4, b5,
         nn.AdaptiveAvgPool2d((1, 1)),
-        nn.Flatten(),
-        nn.Linear(512, 128), nn.ReLU(), nn.Linear(128, 8), nn.ReLU(), nn.Linear(8, 1)
+        nn.Flatten(), nn.Linear(512, 1)
     )
     net.apply(init_weights)  # 初始化模型参数
     return net
@@ -196,7 +195,7 @@ if __name__ == "__main__":
     # 测试一下残差块的输出
     X = torch.rand(1, 3, 224, 224)  # 先初始化一个输入
     # 想测试哪个模型就让 net 为指定模型就行
-    net = myResnet4()
+    net = Resnet34()
     for layer in net:
         X = layer(X)
         print(layer.__class__.__name__, "输出形状: ", X.shape)

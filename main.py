@@ -20,7 +20,7 @@ import torchvision
 from showm import apply as ap  # 自己显示图像的 API ，看一下增强后的图像
 from showm import show_img
 import numpy as np
-from model import myResnet, myResnet2, myResnet3, myResnet4, myResnet34
+from model import myResnet, myResnet2, myResnet3, myResnet4, Resnet34
 
 
 
@@ -162,7 +162,8 @@ if __name__ == '__main__':
     # lr = 1e-4  # myResnet
     # lr = 5e-5  # myResnet2
     # lr = 8e-5  # myResnet3
-    lr = 5e-5  # myResnet4
+    # lr = 5e-5  # myResnet4
+    lr = 1e-4  # Resnet34
     device = try_gpu()
 
     # 主程序
@@ -171,13 +172,13 @@ if __name__ == '__main__':
     train_loader, valid_loader = main.deal_with_data(batch_size)
     
     # 开始训练
-    net = main.train(myResnet4(), train_loader, valid_loader, epochs, lr, device)
+    net = main.train(Resnet34(), train_loader, valid_loader, epochs, lr, device)
 
     # 将我们训练的模型保存下来
-    torch.save(net.state_dict(), 'myResnet4.params')
-    print("保存模型到myResnet4.params")
+    torch.save(net.state_dict(), 'Resnet34.params')
+    print("保存模型到Resnet34.params")
 
-    # 单步程序，看看具体某张图片的打分
+    # 单步程序，训练完成后看看具体某张图片的打分（可以在Prediction.py文件中测试）
     # while True:
     #     id = input("请输入图像编号: ")
     #     path = DATA_PATH + "/FacialBeautyPrediction/image/" + id + ".jpg"
