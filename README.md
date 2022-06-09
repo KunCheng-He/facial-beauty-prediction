@@ -39,16 +39,15 @@
    # 开始训练，第一个参数就是你的模型，自行修改
    net = main.train(myResnet4(), train_loader, valid_loader, epochs, lr, device)
    
-   # 将我们训练的模型保存下来
-   torch.save(net.state_dict(), 'myResnet4.params')
-   print("保存模型到myResnet4.params")
+   # 设置保存模型的名称
+   model_name = 'Resnet34.params'
    ```
-
+   
 3. 模型训练完成后，进入prediction.py文件进行预测，修改两行代码：如下
 
    ```python
+   model_name = "Resnet34.params"  # 修改为我们刚刚保存模型的文件名
    net = myResnet4()  # 修改为我们刚刚训练的模型
-   net.load_state_dict(torch.load("myResnet4.params"))  # 修改为我们刚刚保存模型的文件名
    ```
 
 4. 本地预测也没有问题，再修改几个参数就可以提交到平台上训练了，main.py修改内容如下：
@@ -70,4 +69,4 @@
 
 ## 提交结果
 
-![myResnet18](./myResnet18系列结果.png)
+![myResnet18](./result/myResnet18系列结果.png)

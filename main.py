@@ -156,8 +156,8 @@ class Main(FlyAI):
 
 if __name__ == '__main__':
     # 模型的一些参数
-    batch_size = 64
-    epochs = 60
+    batch_size = 8
+    epochs = 30
     # 各个模型我所使用的 学习率
     # lr = 1e-4  # myResnet
     # lr = 5e-5  # myResnet2
@@ -175,8 +175,9 @@ if __name__ == '__main__':
     net = main.train(Resnet34(), train_loader, valid_loader, epochs, lr, device)
 
     # 将我们训练的模型保存下来
-    torch.save(net.state_dict(), 'Resnet34.params')
-    print("保存模型到Resnet34.params")
+    model_name = 'Resnet34.params'
+    torch.save(net.state_dict(), MODEL_PATH + '/' + model_name)
+    print("保存模型到" + MODEL_PATH + '/' + model_name)
 
     # 单步程序，训练完成后看看具体某张图片的打分（可以在Prediction.py文件中测试）
     # while True:
