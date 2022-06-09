@@ -64,6 +64,7 @@
    ```shell
    zip -r main.zip app.json flyai_sdk.py gender_class.py main.py model.py prediction.py showm.py requirements.txt
    ```
+   也可以在当前目录下执行zip-shell.sh脚本，直接自动打包
 
    之后就打开网站，上传压缩包，等待训练即可
 
