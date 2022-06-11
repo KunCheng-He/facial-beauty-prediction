@@ -91,7 +91,7 @@ class Main(FlyAI):
         data = pd.read_csv("./data/input/FacialBeautyPrediction/train.csv")  # 读入文件
         augs = torchvision.transforms.Compose([  # 做一下图像增强
             torchvision.transforms.RandomHorizontalFlip(p=0.5),  # 随机左右翻转
-            torchvision.transforms.RandomResizedCrop(  # 统一裁剪为 300*300，区域覆盖原来的 90% 以上
+            torchvision.transforms.RandomResizedCrop(  # 统一裁剪为 224*224，区域覆盖原来的 90% 以上
                 (224, 224), scale=(0.9, 1), ratio=(1, 1)  # 高宽比不变（脸型还是很重要的，不要变形）
             ),
             torchvision.transforms.ToTensor()
@@ -156,7 +156,7 @@ class Main(FlyAI):
 
 if __name__ == '__main__':
     # 模型的一些参数
-    batch_size = 64
+    batch_size = 8
     epochs = 30
     # 各个模型我所使用的 学习率
     # lr = 1e-4  # myResnet

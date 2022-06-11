@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*
-from flyai_sdk import MODEL_PATH, FlyAI
+from flyai_sdk import MODEL_PATH, FlyAI, DATA_PATH
 from PIL import Image
 import torchvision
 from model import myResnet, myResnet2, myResnet3, myResnet4, Resnet34
@@ -45,10 +45,10 @@ class Prediction(FlyAI):
 
 
 # 以下是我写的本地测试部分，提交到平台上将以下注释掉即可
-# if __name__ == "__main__":
-#     pre = Prediction()
-#     while True:
-#         id = input("编号: ")
-#         if id == "0":
-#             break
-#         print(pre.predict("./data/input/FacialBeautyPrediction/image/" + id + ".jpg"))
+if __name__ == "__main__":
+    pre = Prediction()
+    while True:
+        id = input("编号: ")
+        if id == "-1":
+            break
+        print(pre.predict(DATA_PATH + "/FacialBeautyPrediction/image/" + id + ".jpg"))
