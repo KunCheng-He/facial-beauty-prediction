@@ -2,7 +2,7 @@
 from flyai_sdk import MODEL_PATH, FlyAI, DATA_PATH
 from PIL import Image
 import torchvision
-from model import myResnet, myResnet2, myResnet3, myResnet4, Resnet34
+from model import Resnet18, myResnet, myResnet2, myResnet3, myResnet4, Resnet34
 import torch
 
 
@@ -14,13 +14,13 @@ class Prediction(FlyAI):
         '''
         模型初始化，必须在此方法中加载模型
         '''
-        model_name = "Resnet34.params"
+        model_name = "Resnet18.params"
         # net 为我们本次训练好的模型，要和载入的参数相对应
         # net = myResnet()
         # net = myResnet2()
         # net = myResnet3()
         # net = myResnet4()
-        net = Resnet34()
+        net = Resnet18()
         # 打印导入模型的路径
         print("导入训练完成的模型：" + MODEL_PATH + '/' + model_name)
         net.load_state_dict(torch.load(MODEL_PATH + '/' + model_name))  # 载入对应训练好的模型
@@ -45,10 +45,10 @@ class Prediction(FlyAI):
 
 
 # 以下是我写的本地测试部分，提交到平台上将以下注释掉即可
-if __name__ == "__main__":
-    pre = Prediction()
-    while True:
-        id = input("编号: ")
-        if id == "-1":
-            break
-        print(pre.predict(DATA_PATH + "/FacialBeautyPrediction/image/" + id + ".jpg"))
+# if __name__ == "__main__":
+#     pre = Prediction()
+#     while True:
+#         id = input("编号: ")
+#         if id == "-1":
+#             break
+#         print(pre.predict(DATA_PATH + "/FacialBeautyPrediction/image/" + id + ".jpg"))
