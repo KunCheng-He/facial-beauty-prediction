@@ -71,3 +71,35 @@
 ## 提交结果
 
 ![myResnet18](./result/myResnet18系列结果.png)
+
+Resnet34 训练 30 个Epoch 后的情况：
+
+训练过程中的 Loss 如下：
+
+```text
+epoch 10 -- train 3520.0 loss: 13.274895 -- valid 880.0 loss: 3.908582
+epoch 11 -- train 3520.0 loss: 13.249414 -- valid 880.0 loss: 3.975655
+epoch 12 -- train 3520.0 loss: 11.784863 -- valid 880.0 loss: 3.483170
+epoch 13 -- train 3520.0 loss: 12.208776 -- valid 880.0 loss: 4.031004
+epoch 14 -- train 3520.0 loss: 11.243232 -- valid 880.0 loss: 3.316070
+epoch 15 -- train 3520.0 loss: 10.033496 -- valid 880.0 loss: 3.072153
+epoch 16 -- train 3520.0 loss: 10.404703 -- valid 880.0 loss: 3.263763
+epoch 17 -- train 3520.0 loss: 9.969427 -- valid 880.0 loss: 3.195012
+epoch 18 -- train 3520.0 loss: 9.466758 -- valid 880.0 loss: 3.143103
+epoch 19 -- train 3520.0 loss: 8.680647 -- valid 880.0 loss: 2.912558
+epoch 20 -- train 3520.0 loss: 9.152394 -- valid 880.0 loss: 2.812887
+epoch 21 -- train 3520.0 loss: 8.368352 -- valid 880.0 loss: 2.759780
+epoch 22 -- train 3520.0 loss: 9.427772 -- valid 880.0 loss: 3.107427
+epoch 23 -- train 3520.0 loss: 7.763277 -- valid 880.0 loss: 2.822353
+epoch 24 -- train 3520.0 loss: 7.852039 -- valid 880.0 loss: 2.930142
+epoch 25 -- train 3520.0 loss: 7.866326 -- valid 880.0 loss: 2.898246
+epoch 26 -- train 3520.0 loss: 7.603067 -- valid 880.0 loss: 2.917806
+epoch 27 -- train 3520.0 loss: 7.540650 -- valid 880.0 loss: 2.887414
+epoch 28 -- train 3520.0 loss: 6.183531 -- valid 880.0 loss: 2.675701
+epoch 29 -- train 3520.0 loss: 7.023748 -- valid 880.0 loss: 2.737805
+epoch 30 -- train 3520.0 loss: 6.127909 -- valid 880.0 loss: 2.639282
+```
+
+预测时给出的评分都很低，导致最后模型评分为 0 分
+
+![Resnet34评分低](./result/Resnet34评分低.png)

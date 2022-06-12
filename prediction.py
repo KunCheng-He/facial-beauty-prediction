@@ -43,10 +43,13 @@ class Prediction(FlyAI):
         img = augs(img)
         img = img.reshape(1, 3, 224, 224)
         score = self.net(img).item()
-        with open(MODEL_PATH + "/score.txt", "a+") as f:
-            f.write("{} ---> {}\n".format(data, score))
-        print(data, " ---> ", score)
-        return score
+        # 手动对越界分数做限定
+        if score < 0:
+            return 0.0
+        elif score > 5:
+            return 5.0
+        else:
+            return score
 
 
 # 以下是我写的本地测试部分，提交到平台上将以下注释掉即可
