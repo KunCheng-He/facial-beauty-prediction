@@ -53,12 +53,13 @@ def try_gpu(i=0):
 
 # 加载数据集的类
 class MyDataset(Dataset):
-    def __init__(self, data, transform = None, target_transform = None) -> None:
+    def __init__(self, data, transform=None, target_transform=None) -> None:
         self.imgs = []
         for i in range(len(data)):
             score = data["label"][i]
             self.imgs.append((
-                DATA_PATH + "/FacialBeautyPrediction" + data["image_path"][i][1:],
+                DATA_PATH + "/FacialBeautyPrediction" +
+                data["image_path"][i][1:],
                 score.astype(np.float32)
             ))
         self.transform = transform
@@ -86,7 +87,8 @@ class Main(FlyAI):
         data_helper.download_from_ids("FacialBeautyPrediction")
 
     def deal_with_data(self, batch_size):
-        data = pd.read_csv("./data/input/FacialBeautyPrediction/train.csv")  # 读入文件
+        data = pd.read_csv(
+            "./data/input/FacialBeautyPrediction/train.csv")  # 读入文件
         augs = torchvision.transforms.Compose([  # 做一下图像增强
             torchvision.transforms.RandomHorizontalFlip(p=0.5),  # 随机左右翻转
             torchvision.transforms.RandomResizedCrop(  # 统一裁剪为 224*224，区域覆盖原来的 90% 以上
@@ -105,13 +107,15 @@ class Main(FlyAI):
         train_sampler = sampler.SubsetRandomSampler(train_indices)
         valid_sampler = sampler.SubsetRandomSampler(valid_indices)
         # 以上随机序列已经生成好，下面载入数据的时候按随机序列载入就可以了
-        train_loader = DataLoader(train_data, batch_size=batch_size, sampler=train_sampler)
-        valid_loader = DataLoader(train_data, batch_size=batch_size, sampler=valid_sampler)
+        train_loader = DataLoader(
+            train_data, batch_size=batch_size, sampler=train_sampler)
+        valid_loader = DataLoader(
+            train_data, batch_size=batch_size, sampler=valid_sampler)
         return train_loader, valid_loader
 
     # 计算总损失
     def sum_loss(self, net, data_iter, loss, device):
-        l , n = 0.0, 0.0
+        l, n = 0.0, 0.0
         for X, y in data_iter:
             X, y = X.to(device), y.to(device)
             y_hat = net(X)
@@ -142,39 +146,41 @@ class Main(FlyAI):
                 optimizer.zero_grad()
                 l.backward()
                 optimizer.step()
-            
+
             # 一个 epoch 已经训练完了，我们看看在训练集上的损失，和验证集上的损失
             trainLoss, trainNum = self.sum_loss(net, train_iter, loss, device)
             validLoss, validNum = self.sum_loss(net, valid_iter, loss, device)
-            print("epoch {} -- train {} loss: {:.6f} -- valid {} loss: {:.6f}".format(epoch+1, trainNum, trainLoss, validNum, validLoss))
+            print("epoch {} -- train {} loss: {:.6f} -- valid {} loss: {:.6f}".format(
+                epoch+1, trainNum, trainLoss, validNum, validLoss))
 
         # 返回我们训练完成的模型
         return net
-    
+
 
 if __name__ == '__main__':
     # 模型的一些参数
     batch_size = 64
     epochs = 30
     # 各个模型我所使用的 学习率
-    lr = 5e-4  # Resnet18
+    # lr = 5e-4  # Resnet18
     # lr = 1e-4  # myResnet
     # lr = 5e-5  # myResnet2
     # lr = 8e-5  # myResnet3
     # lr = 5e-5  # myResnet4
-    # lr = 1e-4  # Resnet34
+    lr = 1e-4  # Resnet34
     device = try_gpu()
 
     # 主程序
     main = Main()
     main.download_data()  # 本地第一次运行需要，下载后本地可将本行代码注释掉，提交到平台上这行代码不要注释
     train_loader, valid_loader = main.deal_with_data(batch_size)
-    
+
     # 开始训练
-    net = main.train(Resnet18(), train_loader, valid_loader, epochs, lr, device)
+    net = main.train(Resnet34(), train_loader,
+                     valid_loader, epochs, lr, device)
 
     # 将我们训练的模型保存下来
-    model_name = 'Resnet18.params'
+    model_name = 'Resnet34.params'
     torch.save(net.state_dict(), MODEL_PATH + '/' + model_name)
     print("保存模型到" + MODEL_PATH + '/' + model_name)
 
@@ -193,4 +199,3 @@ if __name__ == '__main__':
     #     img = img.reshape(1, 3, 300, 300)
     #     img = img.to(device)
     #     print("该图像的预测得分: ", net(img).item())
-        

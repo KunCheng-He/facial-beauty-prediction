@@ -14,16 +14,17 @@ class Prediction(FlyAI):
         '''
         模型初始化，必须在此方法中加载模型
         '''
-        model_name = "Resnet18.params"
+        model_name = "Resnet34.params"
         # net 为我们本次训练好的模型，要和载入的参数相对应
         # net = myResnet()
         # net = myResnet2()
         # net = myResnet3()
         # net = myResnet4()
-        net = Resnet18()
+        net = Resnet34()
         # 打印导入模型的路径
         print("导入训练完成的模型：" + MODEL_PATH + '/' + model_name)
-        net.load_state_dict(torch.load(MODEL_PATH + '/' + model_name))  # 载入对应训练好的模型
+        net.load_state_dict(torch.load(
+            MODEL_PATH + '/' + model_name))  # 载入对应训练好的模型
         return net
 
     def predict(self, data):
@@ -41,7 +42,11 @@ class Prediction(FlyAI):
         ])
         img = augs(img)
         img = img.reshape(1, 3, 224, 224)
-        return self.net(img).item()
+        score = self.net(img).item()
+        with open(MODEL_PATH + "/score.txt", "a+") as f:
+            f.write("{} ---> {}\n".format(data, score))
+        print(data, " ---> ", score)
+        return score
 
 
 # 以下是我写的本地测试部分，提交到平台上将以下注释掉即可
