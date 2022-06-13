@@ -20,7 +20,7 @@ import torchvision
 from showm import apply as ap  # 自己显示图像的 API ，看一下增强后的图像
 from showm import show_img
 import numpy as np
-from model import Resnet18, myResnet, myResnet2, myResnet3, myResnet4, Resnet34
+from model import Resnet18, myResnet, myResnet2, myResnet3, myResnet4, Resnet34, myResnet34
 
 '''
 此项目为FlyAI2.0新版本框架，数据读取，评估方式与之前不同
@@ -160,14 +160,15 @@ class Main(FlyAI):
 if __name__ == '__main__':
     # 模型的一些参数
     batch_size = 64
-    epochs = 1
+    epochs = 30
     # 各个模型我所使用的 学习率
     # lr = 5e-4  # Resnet18
     # lr = 1e-4  # myResnet
     # lr = 5e-5  # myResnet2
     # lr = 8e-5  # myResnet3
     # lr = 5e-5  # myResnet4
-    lr = 1e-4  # Resnet34
+    # lr = 1e-4  # Resnet34
+    lr = 8e-5  # myResnet34
     device = try_gpu()
 
     # 主程序
@@ -176,11 +177,11 @@ if __name__ == '__main__':
     train_loader, valid_loader = main.deal_with_data(batch_size)
 
     # 开始训练
-    net = main.train(Resnet34(), train_loader,
+    net = main.train(myResnet34(), train_loader,
                      valid_loader, epochs, lr, device)
 
     # 将我们训练的模型保存下来
-    model_name = 'Resnet34.params'
+    model_name = 'myResnet34.params'
     torch.save(net.state_dict(), MODEL_PATH + '/' + model_name)
     print("保存模型到" + MODEL_PATH + '/' + model_name)
 

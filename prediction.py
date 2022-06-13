@@ -2,7 +2,7 @@
 from flyai_sdk import MODEL_PATH, FlyAI, DATA_PATH
 from PIL import Image
 import torchvision
-from model import Resnet18, myResnet, myResnet2, myResnet3, myResnet4, Resnet34
+from model import Resnet18, myResnet, myResnet2, myResnet3, myResnet4, Resnet34, myResnet34
 import torch
 
 
@@ -14,13 +14,13 @@ class Prediction(FlyAI):
         '''
         模型初始化，必须在此方法中加载模型
         '''
-        model_name = "Resnet34.params"
+        model_name = "myResnet34.params"
         # net 为我们本次训练好的模型，要和载入的参数相对应
         # net = myResnet()
         # net = myResnet2()
         # net = myResnet3()
         # net = myResnet4()
-        net = Resnet34()
+        net = myResnet34()
         # 打印导入模型的路径
         print("导入训练完成的模型：" + MODEL_PATH + '/' + model_name)
         net.load_state_dict(torch.load(
@@ -43,6 +43,7 @@ class Prediction(FlyAI):
         img = augs(img)
         img = img.reshape(1, 3, 224, 224)
         score = self.net(img).item()
+        print(data, " ---> ", score)
         # 手动对越界分数做限定
         if score < 0:
             return 0.0

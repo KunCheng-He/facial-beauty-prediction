@@ -42,7 +42,8 @@ def resnet_block(input_channels, num_channels, num_residuals, first_block=False)
     blk = []
     for i in range(num_residuals):
         if i == 0 and not first_block:
-            blk.append(Residual(input_channels, num_channels, use_1x1conv=True, strides=2))
+            blk.append(Residual(input_channels, num_channels,
+                       use_1x1conv=True, strides=2))
         else:
             blk.append(Residual(num_channels, num_channels))
     return blk
@@ -58,18 +59,24 @@ def init_weights(m):
 def Resnet18():
     # 第一部分
     b1 = nn.Sequential(
-        nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),  # 通道：3 -> 64  形状：(224-7+3*2+2)/2=112
+        # 通道：3 -> 64  形状：(224-7+3*2+2)/2=112
+        nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),
         nn.BatchNorm2d(64), nn.ReLU(),
-        nn.MaxPool2d(kernel_size=3, stride=2, padding=1)  # 通道不变  形状：(112-3+1*2+2)/2=56
+        # 通道不变  形状：(112-3+1*2+2)/2=56
+        nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
     )
     # 第二部分
-    b2 = nn.Sequential(*resnet_block(64, 64, 2, first_block=True))  # 通道不变  形状不变
+    b2 = nn.Sequential(
+        *resnet_block(64, 64, 2, first_block=True))  # 通道不变  形状不变
     # 第三部分
-    b3 = nn.Sequential(*resnet_block(64, 128, 2))  # 通道: 64 -> 128  形状：(56+1)/2=28
+    # 通道: 64 -> 128  形状：(56+1)/2=28
+    b3 = nn.Sequential(*resnet_block(64, 128, 2))
     # 第四部分
-    b4 = nn.Sequential(*resnet_block(128, 256, 2))  # 通道：128 -> 256  形状：(28+1)/2=14
+    # 通道：128 -> 256  形状：(28+1)/2=14
+    b4 = nn.Sequential(*resnet_block(128, 256, 2))
     # 第五部分
-    b5 = nn.Sequential(*resnet_block(256, 512, 2))  # 通道：256 -> 512  形状：(14+1)/2=7
+    # 通道：256 -> 512  形状：(14+1)/2=7
+    b5 = nn.Sequential(*resnet_block(256, 512, 2))
     # 最后的网络
     net = nn.Sequential(
         b1, b2, b3, b4, b5,
@@ -84,24 +91,31 @@ def Resnet18():
 def myResnet():
     # 第一部分
     b1 = nn.Sequential(
-        nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),  # 通道：3 -> 64  形状：(224-7+3*2+2)/2=112
+        # 通道：3 -> 64  形状：(224-7+3*2+2)/2=112
+        nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),
         nn.BatchNorm2d(64), nn.ReLU(),
-        nn.MaxPool2d(kernel_size=3, stride=2, padding=1)  # 通道不变  形状：(112-3+1*2+2)/2=56
+        # 通道不变  形状：(112-3+1*2+2)/2=56
+        nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
     )
     # 第二部分
-    b2 = nn.Sequential(*resnet_block(64, 64, 2, first_block=True))  # 通道不变  形状不变
+    b2 = nn.Sequential(
+        *resnet_block(64, 64, 2, first_block=True))  # 通道不变  形状不变
     # 第三部分
-    b3 = nn.Sequential(*resnet_block(64, 128, 2))  # 通道: 64 -> 128  形状：(56+1)/2=28
+    # 通道: 64 -> 128  形状：(56+1)/2=28
+    b3 = nn.Sequential(*resnet_block(64, 128, 2))
     # 第四部分
-    b4 = nn.Sequential(*resnet_block(128, 256, 2))  # 通道：128 -> 256  形状：(28+1)/2=14
+    # 通道：128 -> 256  形状：(28+1)/2=14
+    b4 = nn.Sequential(*resnet_block(128, 256, 2))
     # 第五部分
-    b5 = nn.Sequential(*resnet_block(256, 512, 2))  # 通道：256 -> 512  形状：(14+1)/2=7
+    # 通道：256 -> 512  形状：(14+1)/2=7
+    b5 = nn.Sequential(*resnet_block(256, 512, 2))
     # 最后的网络（最后一层我做了改变，10*10 求平均我觉得太大了，再加一层卷积，每个通道改到3*3，后面全连接输出维度下降太快了，使用了一个简单的 MPL）
     net = nn.Sequential(
         b1, b2, b3, b4, b5,
         nn.AdaptiveAvgPool2d((1, 1)),  # 每个通道上 7*7 求平均
         nn.Flatten(),  # 512*1=512
-        nn.Linear(512, 128), nn.ReLU(), nn.Linear(128, 8), nn.ReLU(), nn.Linear(8, 1)  # 我改的一个 MLP
+        nn.Linear(512, 128), nn.ReLU(), nn.Linear(
+            128, 8), nn.ReLU(), nn.Linear(8, 1)  # 我改的一个 MLP
     )
     net.apply(init_weights)  # 初始化模型参数
     return net
@@ -111,18 +125,24 @@ def myResnet():
 def myResnet2():
     # 第一部分
     b1 = nn.Sequential(
-        nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),  # 通道：3 -> 64  形状：(224-7+3*2+2)/2=112
+        # 通道：3 -> 64  形状：(224-7+3*2+2)/2=112
+        nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),
         nn.BatchNorm2d(64), nn.ReLU(),
-        nn.MaxPool2d(kernel_size=3, stride=2, padding=1)  # 通道不变  形状：(112-3+1*2+2)/2=56
+        # 通道不变  形状：(112-3+1*2+2)/2=56
+        nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
     )
     # 第二部分
-    b2 = nn.Sequential(*resnet_block(64, 64, 2, first_block=True))  # 通道不变  形状不变
+    b2 = nn.Sequential(
+        *resnet_block(64, 64, 2, first_block=True))  # 通道不变  形状不变
     # 第三部分
-    b3 = nn.Sequential(*resnet_block(64, 128, 2))  # 通道: 64 -> 128  形状：(56+1)/2=28
+    # 通道: 64 -> 128  形状：(56+1)/2=28
+    b3 = nn.Sequential(*resnet_block(64, 128, 2))
     # 第四部分
-    b4 = nn.Sequential(*resnet_block(128, 256, 2))  # 通道：128 -> 256  形状：(28+1)/2=14
+    # 通道：128 -> 256  形状：(28+1)/2=14
+    b4 = nn.Sequential(*resnet_block(128, 256, 2))
     # 第五部分
-    b5 = nn.Sequential(*resnet_block(256, 512, 2))  # 通道：256 -> 512  形状：(14+1)/2=7
+    # 通道：256 -> 512  形状：(14+1)/2=7
+    b5 = nn.Sequential(*resnet_block(256, 512, 2))
     # 最后的网络（最后一层我做了改变，7*7 求平均我觉得太大了，再加一层卷积，每个通道改到3*3，后面全连接输出维度下降太快了，使用了一个简单的 MPL）
     net = nn.Sequential(
         b1, b2, b3, b4, b5,
@@ -130,8 +150,10 @@ def myResnet2():
         nn.ReLU(), nn.AdaptiveAvgPool2d((1, 1)),  # 每个通道上 2*2 求平均
         nn.Flatten(),  # 512*1=512
         # 加的一个每次折半的 MLP
-        nn.Linear(512, 256), nn.ReLU(), nn.Linear(256, 128), nn.ReLU(), nn.Linear(128, 64), nn.ReLU(),
-        nn.Linear(64, 32), nn.ReLU(), nn.Linear(32, 16), nn.ReLU(), nn.Linear(16, 8), nn.ReLU(), nn.Linear(8, 1)
+        nn.Linear(512, 256), nn.ReLU(), nn.Linear(
+            256, 128), nn.ReLU(), nn.Linear(128, 64), nn.ReLU(),
+        nn.Linear(64, 32), nn.ReLU(), nn.Linear(
+            32, 16), nn.ReLU(), nn.Linear(16, 8), nn.ReLU(), nn.Linear(8, 1)
     )
     net.apply(init_weights)  # 初始化模型参数
     return net
@@ -141,18 +163,24 @@ def myResnet2():
 def myResnet3():
     # 第一部分
     b1 = nn.Sequential(
-        nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),  # 通道：3 -> 64  形状：(224-7+3*2+2)/2=112
+        # 通道：3 -> 64  形状：(224-7+3*2+2)/2=112
+        nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),
         nn.BatchNorm2d(64), nn.ReLU(),
-        nn.MaxPool2d(kernel_size=3, stride=2, padding=1)  # 通道不变  形状：(112-3+1*2+2)/2=56
+        # 通道不变  形状：(112-3+1*2+2)/2=56
+        nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
     )
     # 第二部分
-    b2 = nn.Sequential(*resnet_block(64, 64, 2, first_block=True))  # 通道不变  形状不变
+    b2 = nn.Sequential(
+        *resnet_block(64, 64, 2, first_block=True))  # 通道不变  形状不变
     # 第三部分
-    b3 = nn.Sequential(*resnet_block(64, 128, 2))  # 通道: 64 -> 128  形状：(56+1)/2=28
+    # 通道: 64 -> 128  形状：(56+1)/2=28
+    b3 = nn.Sequential(*resnet_block(64, 128, 2))
     # 第四部分
-    b4 = nn.Sequential(*resnet_block(128, 256, 2))  # 通道：128 -> 256  形状：(28+1)/2=14
+    # 通道：128 -> 256  形状：(28+1)/2=14
+    b4 = nn.Sequential(*resnet_block(128, 256, 2))
     # 第五部分
-    b5 = nn.Sequential(*resnet_block(256, 512, 2))  # 通道：256 -> 512  形状：(14+1)/2=7
+    # 通道：256 -> 512  形状：(14+1)/2=7
+    b5 = nn.Sequential(*resnet_block(256, 512, 2))
     # 最后的网络（最后一层我做了改变，7*7 求平均我觉得太大了，再加一层卷积，每个通道改到3*3，后面全连接输出维度下降太快了，使用了一个简单的 MPL）
     net = nn.Sequential(
         b1, b2, b3, b4, b5,
@@ -160,8 +188,10 @@ def myResnet3():
         nn.ReLU(), nn.Conv2d(512, 512, kernel_size=2),  # 通道不变 形状：2-2+1=1
         nn.Flatten(),  # 512*1=512
         # 加的一个每次折半的 MLP
-        nn.Linear(512, 256), nn.ReLU(), nn.Linear(256, 128), nn.ReLU(), nn.Linear(128, 64), nn.ReLU(),
-        nn.Linear(64, 32), nn.ReLU(), nn.Linear(32, 16), nn.ReLU(), nn.Linear(16, 8), nn.ReLU(), nn.Linear(8, 1)
+        nn.Linear(512, 256), nn.ReLU(), nn.Linear(
+            256, 128), nn.ReLU(), nn.Linear(128, 64), nn.ReLU(),
+        nn.Linear(64, 32), nn.ReLU(), nn.Linear(
+            32, 16), nn.ReLU(), nn.Linear(16, 8), nn.ReLU(), nn.Linear(8, 1)
     )
     net.apply(init_weights)  # 初始化模型参数
     return net
@@ -171,18 +201,24 @@ def myResnet3():
 def myResnet4():
     # 第一部分
     b1 = nn.Sequential(
-        nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),  # 通道：3 -> 64  形状：(224-7+3*2+2)/2=112
+        # 通道：3 -> 64  形状：(224-7+3*2+2)/2=112
+        nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),
         nn.BatchNorm2d(64), nn.ReLU(),
-        nn.MaxPool2d(kernel_size=3, stride=2, padding=1)  # 通道不变  形状：(112-3+1*2+2)/2=56
+        # 通道不变  形状：(112-3+1*2+2)/2=56
+        nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
     )
     # 第二部分
-    b2 = nn.Sequential(*resnet_block(64, 64, 2, first_block=True))  # 通道不变  形状不变
+    b2 = nn.Sequential(
+        *resnet_block(64, 64, 2, first_block=True))  # 通道不变  形状不变
     # 第三部分
-    b3 = nn.Sequential(*resnet_block(64, 128, 2))  # 通道: 64 -> 128  形状：(56+1)/2=28
+    # 通道: 64 -> 128  形状：(56+1)/2=28
+    b3 = nn.Sequential(*resnet_block(64, 128, 2))
     # 第四部分
-    b4 = nn.Sequential(*resnet_block(128, 256, 2))  # 通道：128 -> 256  形状：(28+1)/2=14
+    # 通道：128 -> 256  形状：(28+1)/2=14
+    b4 = nn.Sequential(*resnet_block(128, 256, 2))
     # 第五部分
-    b5 = nn.Sequential(*resnet_block(256, 512, 2))  # 通道：256 -> 512  形状：(14+1)/2=7
+    # 通道：256 -> 512  形状：(14+1)/2=7
+    b5 = nn.Sequential(*resnet_block(256, 512, 2))
     # 最后的网络（最后一层我做了改变，7*7 求平均我觉得太大了，再加一层卷积，每个通道改到3*3，后面全连接输出维度下降太快了，使用了一个简单的 MPL）
     net = nn.Sequential(
         b1, b2, b3, b4, b5,
@@ -190,7 +226,8 @@ def myResnet4():
         nn.ReLU(), nn.Conv2d(512, 512, kernel_size=2),  # 通道不变 形状：2-2+1=1
         nn.Flatten(),  # 512*1=512
         # 加的一个 MLP
-        nn.Linear(512, 128), nn.ReLU(), nn.Linear(128, 8), nn.ReLU(), nn.Linear(8, 1)
+        nn.Linear(512, 128), nn.ReLU(), nn.Linear(
+            128, 8), nn.ReLU(), nn.Linear(8, 1)
     )
     net.apply(init_weights)  # 初始化模型参数
     return net
@@ -200,18 +237,24 @@ def myResnet4():
 def Resnet34():
     # 第一部分
     b1 = nn.Sequential(
-        nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),  # 通道：3 -> 64  形状：(224-7+2*3+2)/2=112
+        # 通道：3 -> 64  形状：(224-7+2*3+2)/2=112
+        nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),
         nn.BatchNorm2d(64), nn.ReLU(),
-        nn.MaxPool2d(kernel_size=3, stride=2, padding=1)  # 通道：64  形状：(112-3+2*1+2)/2=56
+        # 通道：64  形状：(112-3+2*1+2)/2=56
+        nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
     )
     # 第二部分
-    b2 = nn.Sequential(*resnet_block(64, 64, 3, first_block=True))  # 通道：64  形状：56
+    b2 = nn.Sequential(
+        *resnet_block(64, 64, 3, first_block=True))  # 通道：64  形状：56
     # 第三部分
-    b3 = nn.Sequential(*resnet_block(64, 128, 4))  # 通道：64 -> 128 形状：(56+1)/2=28
+    # 通道：64 -> 128 形状：(56+1)/2=28
+    b3 = nn.Sequential(*resnet_block(64, 128, 4))
     # 第四部分
-    b4 = nn.Sequential(*resnet_block(128, 256, 6))  # 通道：128 -> 256 形状：(28+1)/2=14
+    # 通道：128 -> 256 形状：(28+1)/2=14
+    b4 = nn.Sequential(*resnet_block(128, 256, 6))
     # 第五部分
-    b5 = nn.Sequential(*resnet_block(256, 512, 3))  # 通道：256 -> 512 形状：(14+1)/2=7
+    # 通道：256 -> 512 形状：(14+1)/2=7
+    b5 = nn.Sequential(*resnet_block(256, 512, 3))
     # 最后的网络
     net = nn.Sequential(
         b1, b2, b3, b4, b5,
@@ -221,12 +264,46 @@ def Resnet34():
     net.apply(init_weights)  # 初始化模型参数
     return net
 
+# 默认的 Resnet34 评分一直为 0 分，去掉全局平均池化层试试
+
+
+def myResnet34():
+    # 第一部分
+    b1 = nn.Sequential(
+        # 通道：3 -> 64  形状：(224-7+2*3+2)/2=112
+        nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),
+        nn.BatchNorm2d(64), nn.ReLU(),
+        # 通道：64  形状：(112-3+2*1+2)/2=56
+        nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+    )
+    # 第二部分
+    b2 = nn.Sequential(
+        *resnet_block(64, 64, 3, first_block=True))  # 通道：64  形状：56
+    # 第三部分
+    # 通道：64 -> 128 形状：(56+1)/2=28
+    b3 = nn.Sequential(*resnet_block(64, 128, 4))
+    # 第四部分
+    # 通道：128 -> 256 形状：(28+1)/2=14
+    b4 = nn.Sequential(*resnet_block(128, 256, 6))
+    # 第五部分
+    # 通道：256 -> 512 形状：(14+1)/2=7
+    b5 = nn.Sequential(*resnet_block(256, 512, 3))
+    # 最后的网络
+    net = nn.Sequential(
+        b1, b2, b3, b4, b5,
+        nn.Conv2d(512, 512, kernel_size=3, stride=3),  # 通道：512  形状：(7-3+3)/3=2
+        nn.ReLU(), nn.Conv2d(512, 512, kernel_size=2),  # 通道：512  形状：2-2+1=1
+        nn.Flatten(), nn.Linear(512, 1)
+    )
+    net.apply(init_weights)
+    return net
+
 
 if __name__ == "__main__":
     # 测试一下残差块的输出
     X = torch.rand(1, 3, 224, 224)  # 先初始化一个输入
     # 想测试哪个模型就让 net 为指定模型就行
-    net = Resnet18()
+    net = myResnet34()
     for layer in net:
         X = layer(X)
         print(layer.__class__.__name__, "输出形状: ", X.shape)
