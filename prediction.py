@@ -2,7 +2,7 @@
 from flyai_sdk import MODEL_PATH, FlyAI, DATA_PATH
 from PIL import Image
 import torchvision
-from model import Resnet18, myResnet, myResnet2, myResnet3, myResnet4, Resnet34, myResnet34
+from model import Resnet18, myResnet, myResnet2, myResnet3, myResnet4, Resnet34, myResnet34, Densenet
 import torch
 
 
@@ -14,13 +14,14 @@ class Prediction(FlyAI):
         '''
         模型初始化，必须在此方法中加载模型
         '''
-        model_name = "myResnet34.params"
+        model_name = "Densenet.params"
         # net 为我们本次训练好的模型，要和载入的参数相对应
         # net = myResnet()
         # net = myResnet2()
         # net = myResnet3()
         # net = myResnet4()
-        net = myResnet34()
+        # net = myResnet34()
+        net = Densenet()
         # 打印导入模型的路径
         print("导入训练完成的模型：" + MODEL_PATH + '/' + model_name)
         net.load_state_dict(torch.load(

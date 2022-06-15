@@ -70,7 +70,11 @@
 
 ## 提交结果
 
+## Resnet18
+
 ![myResnet18](./result/myResnet18系列结果.png)
+
+## Resnet34
 
 Resnet34 训练 30 个Epoch 后的情况：
 
@@ -103,3 +107,7 @@ epoch 30 -- train 3520.0 loss: 6.127909 -- valid 880.0 loss: 2.639282
 预测时给出的评分都很低，导致最后模型评分为 0 分
 
 ![Resnet34评分低](./result/Resnet34评分低.png)
+
+## Desenet
+
+待续

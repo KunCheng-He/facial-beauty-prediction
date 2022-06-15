@@ -264,9 +264,8 @@ def Resnet34():
     net.apply(init_weights)  # 初始化模型参数
     return net
 
+
 # 默认的 Resnet34 评分一直为 0 分，去掉全局平均池化层试试
-
-
 def myResnet34():
     # 第一部分
     b1 = nn.Sequential(
@@ -298,12 +297,81 @@ def myResnet34():
     net.apply(init_weights)
     return net
 
+"""
+-----------------------------------------------------
+以上两个 Resnet34 的模型，在训练时，损失下降是正常的，但是，
+放到预测集上进行预测的时候，分数偏低，集中在 0~1 这个范围。
+导致 MSE 很高，从而导致模型评分为 0，一下换稠密连接网络试试
+-----------------------------------------------------
+"""
+
+# 稠密块中所需要的卷积块
+def conv_block(input_channels, num_channels):
+    # 通道：改为输出通道  大小：x-3+2*1+1=x 尺寸不会改变
+    return nn.Sequential(
+        nn.BatchNorm2d(input_channels), nn.ReLU(),
+        nn.Conv2d(input_channels, num_channels, kernel_size=3, padding=1)
+    )
+
+# 稠密块
+class DenseBlock(nn.Module):
+    def __init__(self, num_convs, input_channels, num_channels) -> None:
+        super().__init__()
+        self.net = nn.Sequential()
+        for _ in range(num_convs):
+            self.net.add_module(str(_), conv_block(input_channels, num_channels))
+            # 下一个块的通道数要加上上一个块的输出通道数
+            input_channels += num_channels
+    
+    def forward(self, X):
+        for blk in self.net:
+            Y = blk(X)
+            # 通道维度做叠加
+            X = torch.cat((X, Y), dim=1)
+        return X
+
+# 稠密连接网络中所用的 过渡层（稠密网络会使通道数不断的增加，过渡层来控制通道数）
+def transition_block(input_channels, num_channels):
+    return nn.Sequential(
+        nn.BatchNorm2d(input_channels), nn.ReLU(),
+        nn.Conv2d(input_channels, num_channels, kernel_size=1),  # 通过一个 1*1 的卷积核来改变通道数
+        nn.AvgPool2d(kernel_size=2, stride=2)  # (x-2+2)/2=x/2  形状大小减半
+    )
+
+# 构建一个稠密连接网络
+def Densenet():
+    net = nn.Sequential()
+    # 第一部分，和 Resnet 一样
+    net.add_module("start_block", nn.Sequential(
+        nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),  # 通道：3 -> 64  形状：(224-7+2*3+2)/2=112
+        nn.BatchNorm2d(64), nn.ReLU(),
+        nn.MaxPool2d(kernel_size=3, stride=2, padding=1)  # 通道：64  形状：(112-3+2*1+2)/2=56
+    ))
+    # 中间的稠密块部分，我们也分为了 4 块，每个稠密块里有 4 个卷积块，其中前三个稠密块之后加上过渡层来控制通道数
+    input_channels, growth_rate = 64, 32  # 一个当前通道数，一个是每个卷积后新加的通道数
+    for i, num_convs in enumerate([4, 4, 4, 4]):
+        net.add_module("DenseBlock{}".format(i), DenseBlock(num_convs, input_channels, growth_rate))
+        # 上一个稠密块输出的通道数
+        input_channels += num_convs * growth_rate
+        # 在稠密块之间加入过渡层控制通道数
+        if i != 3:
+            net.add_module("transition_block{}".format(i), transition_block(input_channels, int(input_channels/2)))
+            input_channels = int(input_channels/2)
+    # 最后的结尾部分  上一部分最后的输出：通道：248  形状：7*7
+    net.add_module("end_block", nn.Sequential(
+        nn.BatchNorm2d(248), nn.ReLU(), nn.AdaptiveAvgPool2d((1, 1)),
+        nn.Flatten(), nn.Linear(248, 1)
+    ))
+    net.apply(init_weights)
+    return net
+
 
 if __name__ == "__main__":
-    # 测试一下残差块的输出
+    # 测试一下网络的输出
     X = torch.rand(1, 3, 224, 224)  # 先初始化一个输入
     # 想测试哪个模型就让 net 为指定模型就行
-    net = myResnet34()
+    net = Densenet()
+    # print(net(X).shape)
     for layer in net:
         X = layer(X)
         print(layer.__class__.__name__, "输出形状: ", X.shape)
