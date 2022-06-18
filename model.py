@@ -398,12 +398,110 @@ def myDensenet():
     net.apply(init_weights)
     return net
 
+# VGG19
+def VGG():
+    conv1 = nn.Sequential(
+        nn.Conv2d(in_channels=3, out_channels=64, kernel_size=3, stride=1, padding=1),  # 通道：3->64 形状：224-3+1*2+1=224
+        nn.BatchNorm2d(64),
+        nn.ReLU(inplace=True)
+    )
+    conv2 = nn.Sequential(
+        nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1),  # 通道：64->64 形状：224-3+1*2+1=224
+        nn.BatchNorm2d(64),
+        nn.ReLU(inplace=True),
+        nn.MaxPool2d(kernel_size=2, stride=2, padding=0)  # 通道：64 形状：(224-2+2)/2=112
+    )
+    conv3 = nn.Sequential(
+        nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, stride=1, padding=1),  # 通道：64->128 形状：112-3+1*2+1=112
+        nn.BatchNorm2d(128),
+        nn.ReLU(inplace=True),
+    )
+    conv4 = nn.Sequential(
+        nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, stride=1, padding=1),  # 通道：128->128 形状：112-3+1*2+1=112
+        nn.BatchNorm2d(128),
+        nn.ReLU(inplace=True),
+        nn.MaxPool2d(kernel_size=2, stride=2, padding=0)  # 通道：128 形状：(112-2+2)/2=56
+    )
+    conv5 = nn.Sequential(
+        nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, stride=1, padding=1),  # 通道：128->256 形状：56-3+1*2+1=56
+        nn.BatchNorm2d(256),
+        nn.ReLU(inplace=True),
+    )
+    conv6 = nn.Sequential(
+        nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, stride=1, padding=1),  # 通道：256->256 形状：56-3+1*2+1=56
+        nn.BatchNorm2d(256),
+        nn.ReLU(inplace=True),
+    )
+    conv7 = nn.Sequential(
+        nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, stride=1, padding=1),  # 通道：256->256 形状：56-3+1*2+1=56
+        nn.BatchNorm2d(256),
+        nn.ReLU(inplace=True),
+    )
+    conv8 = nn.Sequential(
+        nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, stride=1, padding=1),  # 通道：256->256 形状：56-3+1*2+1=56
+        nn.BatchNorm2d(256),
+        nn.ReLU(inplace=True),
+        nn.MaxPool2d(kernel_size=2, stride=2, padding=0)  # 通道：256 形状：(56-2+2)/2=28
+    )
+    conv9 = nn.Sequential(
+        nn.Conv2d(in_channels=256, out_channels=512, kernel_size=3, stride=1, padding=1),  # 通道：256->512 形状：28-3+1*2+1=28
+        nn.BatchNorm2d(512),
+        nn.ReLU(inplace=True),
+    )
+    conv10 = nn.Sequential(
+        nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, stride=1, padding=1),  # 通道：512->512 形状：28-3+1*2+1=28
+        nn.BatchNorm2d(512),
+        nn.ReLU(inplace=True),
+    )
+    conv11 = nn.Sequential(
+        nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, stride=1, padding=1),  # 通道：512->512 形状：28-3+1*2+1=28
+        nn.BatchNorm2d(512),
+        nn.ReLU(inplace=True),
+    )
+    conv12 = nn.Sequential(
+        nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, stride=1, padding=1),  # 通道：512->512 形状：28-3+1*2+1=28
+        nn.BatchNorm2d(512),
+        nn.ReLU(inplace=True),
+        nn.MaxPool2d(kernel_size=2, stride=2, padding=0)  # 通道：512 形状：(28-2+2)/2=14
+    )
+    conv13 = nn.Sequential(
+        nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, stride=1, padding=1),  # 通道：512->512 形状：14-3+1*2+1=14
+        nn.BatchNorm2d(512),
+        nn.ReLU(inplace=True),
+    )
+    conv14 = nn.Sequential(
+        nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, stride=1, padding=1),  # 通道：512->512 形状：14-3+1*2+1=14
+        nn.BatchNorm2d(512),
+        nn.ReLU(inplace=True),
+    )
+    conv15 = nn.Sequential(
+        nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, stride=1, padding=1),  # 通道：512->512 形状：14-3+1*2+1=14
+        nn.BatchNorm2d(512),
+        nn.ReLU(inplace=True),
+    )
+    conv16 = nn.Sequential(
+        nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, stride=1, padding=1),  # 通道：512->512 形状：14-3+1*2+1=14
+        nn.BatchNorm2d(512),
+        nn.ReLU(inplace=True),
+        nn.MaxPool2d(kernel_size=2, stride=2, padding=0)  # 通道：512 形状：(14-2+2)/2=7
+    )
+    net = nn.Sequential(
+        conv1, conv2, conv3, conv4, conv5, conv6, conv7,
+        conv8, conv9, conv10, conv11, conv12, conv13, conv14,
+        conv15, conv16,
+        nn.AdaptiveAvgPool2d((1, 1)),  # 通道：512  形状：7*7 做平均变为 1*1
+        nn.Flatten(),
+        nn.Linear(512, 128), nn.ReLU(), nn.Linear(128, 8), nn.ReLU(), nn.Linear(8, 1)
+    )
+    net.apply(init_weights)  # 初始化模型参数
+    return net
+
 
 if __name__ == "__main__":
     # 测试一下网络的输出
     X = torch.rand(1, 3, 224, 224)  # 先初始化一个输入
     # 想测试哪个模型就让 net 为指定模型就行
-    net = myDensenet()
+    net = VGG()
     # print(net(X).shape)
     for layer in net:
         X = layer(X)
