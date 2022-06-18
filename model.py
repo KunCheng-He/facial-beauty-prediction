@@ -365,12 +365,45 @@ def Densenet():
     net.apply(init_weights)
     return net
 
+# 尝试修改 Densenet
+def myDensenet():
+    net = nn.Sequential()
+    # 开头部分不改变
+    net.add_module("start_block", nn.Sequential(
+        nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),  # 通道：3 -> 64  形状：(224-7+2*3+2)/2=112
+        nn.BatchNorm2d(64), nn.ReLU(),
+        nn.MaxPool2d(kernel_size=3, stride=2, padding=1)  # 通道：64  形状：(112-3+2*1+2)/2=56
+    ))
+    # 中间我们减少一个稠密块
+    input_channels, growth_rate = 64, 32  # 一个当前通道数，一个是每个卷积后新加的通道数
+    for i, num_convs in enumerate([4, 4, 4]):
+        net.add_module("DenseBlock{}".format(i), DenseBlock(num_convs, input_channels, growth_rate))
+        # 上一个稠密块输出的通道数
+        input_channels += num_convs * growth_rate
+        # 在稠密块之间加入过渡层控制通道数
+        if i != 2:
+            net.add_module("transition_block{}".format(i), transition_block(input_channels, int(input_channels/2)))
+            input_channels = int(input_channels/2)
+    # 中间的稠密块输出 通道数为 240 形状为 14*14
+    # 下面加入我自己的卷积层
+    net.add_module("my_conv", nn.Sequential(
+        nn.Conv2d(240, 480, kernel_size=3, stride=2),  # 通道：240->480  形状：(14-3+2)/2=6
+        nn.ReLU(), nn.Conv2d(480, 480, kernel_size=3, stride=3),  # 通道：480  形状：(6-3+3)/3=2
+        nn.ReLU(), nn.AvgPool2d(kernel_size=2)  # 通道：480  形状：1*1
+    ))
+    # 结束部分加入 MLP
+    net.add_module("end_block", nn.Sequential(
+        nn.Flatten(), nn.Linear(480, 64), nn.ReLU(), nn.Linear(64, 8), nn.ReLU(), nn.Linear(8, 1)
+    ))
+    net.apply(init_weights)
+    return net
+
 
 if __name__ == "__main__":
     # 测试一下网络的输出
     X = torch.rand(1, 3, 224, 224)  # 先初始化一个输入
     # 想测试哪个模型就让 net 为指定模型就行
-    net = Densenet()
+    net = myDensenet()
     # print(net(X).shape)
     for layer in net:
         X = layer(X)
