@@ -18,9 +18,9 @@
 
 暂时略，可看代码...
 
-## 修改模型的过程
+## 加入新模型代码的修改过程
 
-1. 在model.py中定义新的模型，并进行测试
+1. 在model.py中定义新的模型，并进行测试（在函数中把参数初始化好的模型返回回来）
 
 2. 在main.py中导入新定义的模型，之后修改主函数中的如下内容：
 
@@ -64,7 +64,7 @@
    ```shell
    zip -r main.zip app.json flyai_sdk.py gender_class.py main.py model.py prediction.py showm.py requirements.txt
    ```
-   也可以在当前目录下执行zip-shell.sh脚本，直接自动打包
+   也可以在当前目录下执行 **zip-shell.sh** 脚本，直接自动打包
 
    之后就打开网站，上传压缩包，等待训练即可
 
@@ -110,4 +110,4 @@ epoch 30 -- train 3520.0 loss: 6.127909 -- valid 880.0 loss: 2.639282
 
 ## Desenet
 
-待续
+Desenet 模仿 Resnet18 的结构，跑出来的模型评分还是 0 分，预测集上的打分区间集中在 1~2 分之间。
