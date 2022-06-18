@@ -111,3 +111,11 @@ epoch 30 -- train 3520.0 loss: 6.127909 -- valid 880.0 loss: 2.639282
 ## Desenet
 
 Desenet 模仿 Resnet18 的结构，跑出来的模型评分还是 0 分，预测集上的打分区间集中在 1~2 分之间。
+
+修改过后的 myDesnet 效果好了不少
+
+![myDesnet结果](./result/Densenet.png)
+
+## VGG
+
+暂略
