@@ -165,13 +165,13 @@ if __name__ == '__main__':
     # lr = 5e-4  # Resnet18
     # lr = 1e-4  # myResnet
     # lr = 5e-5  # myResnet2
-    # lr = 8e-5  # myResnet3
+    lr = 8e-5  # myResnet3
     # lr = 5e-5  # myResnet4
     # lr = 1e-4  # Resnet34
     # lr = 8e-5  # myResnet34
     # lr = 1e-4  # Densenet
     # lr = 5e-5  # myDensent
-    lr = 1e-4  # VGG
+    # lr = 1e-4  # VGG
     device = try_gpu()
 
     # 主程序
@@ -180,11 +180,11 @@ if __name__ == '__main__':
     train_loader, valid_loader = main.deal_with_data(batch_size)
 
     # 开始训练
-    net = main.train(VGG(), train_loader,
+    net = main.train(myResnet3(), train_loader,
                      valid_loader, epochs, lr, device)
 
     # 将我们训练的模型保存下来
-    model_name = 'vgg19.params'
+    model_name = 'myResnet3.params'
     torch.save(net.state_dict(), MODEL_PATH + '/' + model_name)
     print("保存模型到" + MODEL_PATH + '/' + model_name)
 
